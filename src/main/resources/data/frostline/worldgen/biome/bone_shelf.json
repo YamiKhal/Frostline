@@ -1,0 +1,90 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.6699999999999999,
+  "downfall": 0.0,
+  "temperature_modifier": "none",
+  "effects": {
+    "sky_color": 2894386,
+    "fog_color": 3420474,
+    "water_color": 4020182,
+    "water_fog_color": 329011,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "grass_color": 4867904,
+    "foliage_color": 4078389,
+    "music": {
+      "sound": "minecraft:music.overworld.jagged_peaks",
+      "min_delay": 14000,
+      "max_delay": 26000,
+      "replace_current_music": false
+    },
+    "particle": {
+      "probability": 0.008,
+      "options": {
+        "type": "minecraft:white_ash"
+      }
+    }
+  },
+  "spawners": {
+    "monster": [
+      {
+        "type": "minecraft:skeleton",
+        "weight": 60,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:zombie",
+        "weight": 40,
+        "minCount": 2,
+        "maxCount": 3
+      },
+      {
+        "type": "minecraft:enderman",
+        "weight": 30,
+        "minCount": 1,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:creeper",
+        "weight": 30,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "minecraft:witch",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "creature": [],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [
+      "frostline:tuff_boulder"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
+}

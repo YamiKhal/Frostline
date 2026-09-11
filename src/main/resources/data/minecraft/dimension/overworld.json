@@ -1,0 +1,1422 @@
+{
+  "type": "minecraft:overworld",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "frostline:frozen_overworld",
+    "biome_source": {
+      "type": "minecraft:multi_noise",
+      "biomes": [
+        {
+          "biome": "frostline:hollow_spires",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              -0.55
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:windscoured_crags",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              -0.55
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:frost_shelf",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              -0.55
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.55,
+              -0.375
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:drift_barrens",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              -0.55
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:rime_hollows",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              -0.55
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:frozen_hollow",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              -0.55
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:snowveil_flats",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              -0.55
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:frozen_spires",
+          "parameters": {
+            "temperature": [
+              -0.55,
+              -0.2
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:glass_ridges",
+          "parameters": {
+            "temperature": [
+              -0.55,
+              -0.2
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:shattered_shelf",
+          "parameters": {
+            "temperature": [
+              -0.55,
+              -0.2
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.55,
+              -0.375
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:deadly_snowfield",
+          "parameters": {
+            "temperature": [
+              -0.55,
+              -0.2
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:crevasse_fields",
+          "parameters": {
+            "temperature": [
+              -0.55,
+              -0.2
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:whiteout_flats",
+          "parameters": {
+            "temperature": [
+              -0.55,
+              -0.2
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:bone_drifts",
+          "parameters": {
+            "temperature": [
+              -0.55,
+              -0.2
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:cinder_ridges",
+          "parameters": {
+            "temperature": [
+              -0.2,
+              0.15
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:soot_spires",
+          "parameters": {
+            "temperature": [
+              -0.2,
+              0.15
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:slaghelm",
+          "parameters": {
+            "temperature": [
+              -0.2,
+              0.15
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.55,
+              -0.375
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:ashen_snowfield",
+          "parameters": {
+            "temperature": [
+              -0.2,
+              0.15
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:ember_hollows",
+          "parameters": {
+            "temperature": [
+              -0.2,
+              0.15
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:ashfall_flats",
+          "parameters": {
+            "temperature": [
+              -0.2,
+              0.15
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:charred_barrens",
+          "parameters": {
+            "temperature": [
+              -0.2,
+              0.15
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:slate_peaks",
+          "parameters": {
+            "temperature": [
+              0.15,
+              0.6
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:tuff_spires",
+          "parameters": {
+            "temperature": [
+              0.15,
+              0.6
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:grey_shelf",
+          "parameters": {
+            "temperature": [
+              0.15,
+              0.6
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.55,
+              -0.375
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:slushfields",
+          "parameters": {
+            "temperature": [
+              0.15,
+              0.6
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:meltstone_hollows",
+          "parameters": {
+            "temperature": [
+              0.15,
+              0.6
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:pale_flats",
+          "parameters": {
+            "temperature": [
+              0.15,
+              0.6
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:gravel_barrens",
+          "parameters": {
+            "temperature": [
+              0.15,
+              0.6
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:emerald_bluffs",
+          "parameters": {
+            "temperature": [
+              0.6,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:verdant_crags",
+          "parameters": {
+            "temperature": [
+              0.6,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -1.0,
+              -0.55
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:mossy_shelf",
+          "parameters": {
+            "temperature": [
+              0.6,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.55,
+              -0.375
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:verdant_downs",
+          "parameters": {
+            "temperature": [
+              0.6,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:sunlit_hollows",
+          "parameters": {
+            "temperature": [
+              0.6,
+              1.0
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              -0.375,
+              0.2
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:verdant_plains",
+          "parameters": {
+            "temperature": [
+              0.6,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:sunlit_meadow",
+          "parameters": {
+            "temperature": [
+              0.6,
+              1.0
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              0.6
+            ],
+            "erosion": [
+              0.2,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:ashen_spires",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              -0.375
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:blackglass_ridge",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              -0.375
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:tuffspine",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              -0.375
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:hollow_teeth",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              -0.375
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:soot_downs",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -0.375,
+              0.25
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:slag_hollows",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -0.375,
+              0.25
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:cracked_expanse",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -0.375,
+              0.25
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:bone_shelf",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -0.375,
+              0.25
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:ashen_flats",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              0.25,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:dust_barrens",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              0.25,
+              1.0
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:deepslate_pan",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              0.25,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              0.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:the_quiet",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.0,
+              1.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              0.25,
+              1.0
+            ],
+            "weirdness": [
+              0.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

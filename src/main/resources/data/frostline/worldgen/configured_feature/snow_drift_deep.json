@@ -1,0 +1,10 @@
+{
+  "type": "frostline:snow_drift",
+  "config": {
+    "base_layers": 3,
+    "max_layers": 26,
+    "deep_strength": 13.0,
+    "hollow_bonus": 3.0,
+    "bare_threshold": 0.72
+  }
+}

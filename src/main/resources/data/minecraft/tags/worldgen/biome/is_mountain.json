@@ -1,0 +1,20 @@
+{
+  "replace": true,
+  "values": [
+    "frostline:hollow_spires",
+    "frostline:windscoured_crags",
+    "frostline:frost_shelf",
+    "frostline:frozen_spires",
+    "frostline:glass_ridges",
+    "frostline:shattered_shelf",
+    "frostline:cinder_ridges",
+    "frostline:soot_spires",
+    "frostline:slaghelm",
+    "frostline:slate_peaks",
+    "frostline:tuff_spires",
+    "frostline:grey_shelf",
+    "frostline:emerald_bluffs",
+    "frostline:verdant_crags",
+    "frostline:mossy_shelf"
+  ]
+}

@@ -1,0 +1,11 @@
+/.git
+/.gradle
+/.idea
+/build
+/gradle
+/optional
+/ref
+CONTROLS.md
+HANDOFF.md
+gen2.py
+gen3.py

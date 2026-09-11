@@ -1,0 +1,33 @@
+{
+  "replace": true,
+  "values": [
+    "frostline:hollow_spires",
+    "frostline:windscoured_crags",
+    "frostline:frost_shelf",
+    "frostline:drift_barrens",
+    "frostline:rime_hollows",
+    "frostline:frozen_hollow",
+    "frostline:snowveil_flats",
+    "frostline:frozen_spires",
+    "frostline:glass_ridges",
+    "frostline:shattered_shelf",
+    "frostline:deadly_snowfield",
+    "frostline:crevasse_fields",
+    "frostline:whiteout_flats",
+    "frostline:bone_drifts",
+    "frostline:cinder_ridges",
+    "frostline:soot_spires",
+    "frostline:slaghelm",
+    "frostline:ashen_snowfield",
+    "frostline:ember_hollows",
+    "frostline:ashfall_flats",
+    "frostline:charred_barrens",
+    "frostline:slate_peaks",
+    "frostline:tuff_spires",
+    "frostline:grey_shelf",
+    "frostline:slushfields",
+    "frostline:meltstone_hollows",
+    "frostline:pale_flats",
+    "frostline:gravel_barrens"
+  ]
+}
