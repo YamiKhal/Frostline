@@ -7,5 +7,7 @@
 /ref
 CONTROLS.md
 HANDOFF.md
+WORLDGEN.md
 gen2.py
 gen3.py
+verify.py

@@ -1057,7 +1057,7 @@
           }
         },
         {
-          "biome": "frostline:ashen_spires",
+          "biome": "frostline:whisper_spires",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1073,40 +1073,10 @@
             ],
             "erosion": [
               -1.0,
-              -0.375
+              -0.55
             ],
             "weirdness": [
               -1.0,
-              0.0
-            ],
-            "depth": [
-              -1.5,
-              1.5
-            ],
-            "offset": 0.0
-          }
-        },
-        {
-          "biome": "frostline:blackglass_ridge",
-          "parameters": {
-            "temperature": [
-              -1.0,
-              1.0
-            ],
-            "humidity": [
-              -1.0,
-              0.0
-            ],
-            "continentalness": [
-              0.6,
-              1.0
-            ],
-            "erosion": [
-              -1.0,
-              -0.375
-            ],
-            "weirdness": [
-              0.0,
               1.0
             ],
             "depth": [
@@ -1117,7 +1087,7 @@
           }
         },
         {
-          "biome": "frostline:tuffspine",
+          "biome": "frostline:sculkspine_peaks",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1133,11 +1103,11 @@
             ],
             "erosion": [
               -1.0,
-              -0.375
+              -0.55
             ],
             "weirdness": [
               -1.0,
-              0.0
+              1.0
             ],
             "depth": [
               -1.5,
@@ -1147,7 +1117,37 @@
           }
         },
         {
-          "biome": "frostline:hollow_teeth",
+          "biome": "frostline:hushed_shelf",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              0.0
+            ],
+            "continentalness": [
+              0.6,
+              1.0
+            ],
+            "erosion": [
+              -0.55,
+              -0.375
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -1.5,
+              1.5
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "frostline:resonant_crag",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1162,11 +1162,11 @@
               1.0
             ],
             "erosion": [
-              -1.0,
+              -0.55,
               -0.375
             ],
             "weirdness": [
-              0.0,
+              -1.0,
               1.0
             ],
             "depth": [
@@ -1177,7 +1177,7 @@
           }
         },
         {
-          "biome": "frostline:soot_downs",
+          "biome": "frostline:creeping_downs",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1193,7 +1193,7 @@
             ],
             "erosion": [
               -0.375,
-              0.25
+              0.2
             ],
             "weirdness": [
               -1.0,
@@ -1207,7 +1207,7 @@
           }
         },
         {
-          "biome": "frostline:slag_hollows",
+          "biome": "frostline:vein_hollows",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1223,7 +1223,7 @@
             ],
             "erosion": [
               -0.375,
-              0.25
+              0.2
             ],
             "weirdness": [
               0.0,
@@ -1237,7 +1237,7 @@
           }
         },
         {
-          "biome": "frostline:cracked_expanse",
+          "biome": "frostline:bloom_hollows",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1253,7 +1253,7 @@
             ],
             "erosion": [
               -0.375,
-              0.25
+              0.2
             ],
             "weirdness": [
               -1.0,
@@ -1267,7 +1267,7 @@
           }
         },
         {
-          "biome": "frostline:bone_shelf",
+          "biome": "frostline:shrieker_fields",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1283,7 +1283,7 @@
             ],
             "erosion": [
               -0.375,
-              0.25
+              0.2
             ],
             "weirdness": [
               0.0,
@@ -1297,7 +1297,7 @@
           }
         },
         {
-          "biome": "frostline:ashen_flats",
+          "biome": "frostline:muted_flats",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1312,7 +1312,7 @@
               1.0
             ],
             "erosion": [
-              0.25,
+              0.2,
               1.0
             ],
             "weirdness": [
@@ -1327,7 +1327,7 @@
           }
         },
         {
-          "biome": "frostline:dust_barrens",
+          "biome": "frostline:still_barrens",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1342,7 +1342,7 @@
               1.0
             ],
             "erosion": [
-              0.25,
+              0.2,
               1.0
             ],
             "weirdness": [
@@ -1357,7 +1357,7 @@
           }
         },
         {
-          "biome": "frostline:deepslate_pan",
+          "biome": "frostline:sculk_sea",
           "parameters": {
             "temperature": [
               -1.0,
@@ -1372,7 +1372,7 @@
               1.0
             ],
             "erosion": [
-              0.25,
+              0.2,
               1.0
             ],
             "weirdness": [
@@ -1402,7 +1402,7 @@
               1.0
             ],
             "erosion": [
-              0.25,
+              0.2,
               1.0
             ],
             "weirdness": [

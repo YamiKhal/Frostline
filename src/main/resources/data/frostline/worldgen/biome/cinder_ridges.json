@@ -107,7 +107,11 @@
     [],
     [],
     [
-      "frostline:snow_drift"
+      "minecraft:freeze_top_layer",
+      "frostline:snow/normal/first",
+      "frostline:snow/normal/second",
+      "frostline:snow/normal/third",
+      "frostline:snow/fix"
     ]
   ]
 }
