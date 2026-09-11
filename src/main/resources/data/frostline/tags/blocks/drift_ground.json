@@ -1,0 +1,26 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:snow_block",
+    "minecraft:packed_ice",
+    "minecraft:blue_ice",
+    "minecraft:ice",
+    "minecraft:stone",
+    "minecraft:deepslate",
+    "minecraft:cobbled_deepslate",
+    "minecraft:tuff",
+    "minecraft:andesite",
+    "minecraft:calcite",
+    "minecraft:gravel",
+    "minecraft:coarse_dirt",
+    "minecraft:dirt",
+    "minecraft:grass_block",
+    "minecraft:blackstone",
+    "minecraft:basalt",
+    "minecraft:smooth_basalt",
+    "minecraft:netherrack",
+    "minecraft:magma_block",
+    "minecraft:obsidian",
+    "minecraft:sculk"
+  ]
+}
