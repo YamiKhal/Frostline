@@ -11,17 +11,16 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
- * Frostline is a datapack wearing a mod as a hat.
+ * Java shim for the Frostline worldgen datapack.
  *
  * The ONLY thing registered here is a density function that can read X/Z.
  * Vanilla density functions see Y, noise and splines but never horizontal
  * position, so "region N begins M blocks from spawn" is impossible to express
  * in a pure datapack. That single gap is what this class fills.
  *
- * Everything else - terrain shape, surfaces, biomes, snow depth, decoration -
- * is JSON under src/main/resources/data/, emitted by gen3.py. If you find
- * yourself wanting to add Java here, check first whether a density function,
- * a surface rule, or a placed feature with a block_predicate_filter can say it.
+ * All worldgen data lives in the separate datapack. If you find yourself
+ * wanting to add Java here, check first whether a density function, a surface
+ * rule, or a placed feature with a block_predicate_filter can say it.
  */
 @Mod(Frostline.MODID)
 public class Frostline {

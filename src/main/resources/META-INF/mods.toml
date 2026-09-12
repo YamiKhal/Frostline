@@ -5,10 +5,10 @@ license="All Rights Reserved"
 [[mods]]
 modId="frostline"
 version="1.0.0"
-displayName="Frostline Worldgen"
+displayName="Frostline"
 description='''
-Progressive frozen-region overworld. Java provides one coordinate-aware density
-function; everything else is data driven.
+Registers frostline:progression, a coordinate-aware density function.
+Required by the Frostline worldgen datapack.
 '''
 
 [[dependencies.frostline]]
