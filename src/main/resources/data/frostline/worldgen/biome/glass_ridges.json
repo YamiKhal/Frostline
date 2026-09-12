@@ -10,7 +10,7 @@
     "water_fog_color": 329011,
     "mood_sound": {
       "sound": "minecraft:ambient.cave",
-      "tick_delay": 6000,
+      "tick_delay": 5200,
       "block_search_extent": 8,
       "offset": 2.0
     },
@@ -23,10 +23,15 @@
       "replace_current_music": false
     },
     "particle": {
-      "probability": 0.0025,
+      "probability": 0.0065,
       "options": {
         "type": "minecraft:snowflake"
       }
+    },
+    "ambient_sound": "minecraft:ambient.basalt_deltas.loop",
+    "additions_sound": {
+      "sound": "minecraft:ambient.basalt_deltas.additions",
+      "tick_chance": 0.0055
     }
   },
   "spawners": {
@@ -77,9 +82,15 @@
     "creature": [
       {
         "type": "minecraft:rabbit",
-        "weight": 2,
+        "weight": 4,
         "minCount": 1,
         "maxCount": 2
+      },
+      {
+        "type": "minecraft:fox",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
       }
     ],
     "ambient": [],
@@ -97,7 +108,8 @@
     [],
     [],
     [
-      "frostline:ice_needle"
+      "frostline:ice_needle",
+      "frostline:icicle"
     ],
     [],
     [],

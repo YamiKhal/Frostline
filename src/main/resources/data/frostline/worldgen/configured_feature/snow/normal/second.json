@@ -9,6 +9,15 @@
           "data": {
             "Name": "minecraft:snow",
             "Properties": {
+              "layers": "3"
+            }
+          }
+        },
+        {
+          "weight": 1,
+          "data": {
+            "Name": "minecraft:snow",
+            "Properties": {
               "layers": "4"
             }
           }

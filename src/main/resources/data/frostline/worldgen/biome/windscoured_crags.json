@@ -14,8 +14,8 @@
       "block_search_extent": 8,
       "offset": 2.0
     },
-    "grass_color": 7635586,
-    "foliage_color": 7109242,
+    "grass_color": 6582880,
+    "foliage_color": 6056536,
     "music": {
       "sound": "minecraft:music.overworld.frozen_peaks",
       "min_delay": 14000,
@@ -23,11 +23,12 @@
       "replace_current_music": false
     },
     "particle": {
-      "probability": 0.0025,
+      "probability": 0.0022,
       "options": {
         "type": "minecraft:snowflake"
       }
-    }
+    },
+    "ambient_sound": "minecraft:ambient.basalt_deltas.loop"
   },
   "spawners": {
     "monster": [
@@ -106,7 +107,10 @@
   "features": [
     [],
     [],
-    [],
+    [
+      "frostline:stone_boulder",
+      "frostline:cracked_boulder"
+    ],
     [],
     [],
     [],
@@ -116,10 +120,12 @@
     [],
     [
       "minecraft:freeze_top_layer",
-      "frostline:snow/deep/first",
-      "frostline:snow/deep/second",
-      "frostline:snow/deep/third",
-      "frostline:snow/fix"
+      "frostline:snow/light/first",
+      "frostline:snow/light/second",
+      "frostline:snow/light/third",
+      "frostline:snow/fix",
+      "frostline:bare/stone",
+      "frostline:bare/gravel"
     ]
   ]
 }

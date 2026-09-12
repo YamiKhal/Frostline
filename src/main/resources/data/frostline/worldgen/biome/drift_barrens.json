@@ -1,6 +1,6 @@
 {
   "has_precipitation": true,
-  "temperature": -0.72,
+  "temperature": -0.71,
   "downfall": 0.85,
   "temperature_modifier": "none",
   "effects": {
@@ -14,8 +14,8 @@
       "block_search_extent": 8,
       "offset": 2.0
     },
-    "grass_color": 8293516,
-    "foliage_color": 7767172,
+    "grass_color": 7240810,
+    "foliage_color": 6714466,
     "music": {
       "sound": "minecraft:music.overworld.snowy_slopes",
       "min_delay": 14000,
@@ -23,11 +23,12 @@
       "replace_current_music": false
     },
     "particle": {
-      "probability": 0.0025,
+      "probability": 0.0022,
       "options": {
         "type": "minecraft:snowflake"
       }
-    }
+    },
+    "ambient_sound": "minecraft:ambient.basalt_deltas.loop"
   },
   "spawners": {
     "monster": [
@@ -115,13 +116,17 @@
     [],
     [],
     [],
-    [],
+    [
+      "frostline:tree/dead_sparse",
+      "frostline:tree/dead_pinestand"
+    ],
     [
       "minecraft:freeze_top_layer",
-      "frostline:snow/deep/first",
-      "frostline:snow/deep/second",
-      "frostline:snow/deep/third",
-      "frostline:snow/fix"
+      "frostline:snow/light/first",
+      "frostline:snow/light/second",
+      "frostline:snow/light/third",
+      "frostline:snow/fix",
+      "frostline:bare/dirt"
     ]
   ]
 }

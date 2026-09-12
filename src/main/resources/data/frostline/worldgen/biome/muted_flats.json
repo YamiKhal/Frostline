@@ -10,7 +10,7 @@
     "water_fog_color": 329011,
     "mood_sound": {
       "sound": "minecraft:ambient.cave",
-      "tick_delay": 6000,
+      "tick_delay": 5200,
       "block_search_extent": 8,
       "offset": 2.0
     },
@@ -21,6 +21,17 @@
       "min_delay": 14000,
       "max_delay": 26000,
       "replace_current_music": false
+    },
+    "particle": {
+      "probability": 0.004,
+      "options": {
+        "type": "minecraft:warped_spore"
+      }
+    },
+    "ambient_sound": "minecraft:ambient.soul_sand_valley.loop",
+    "additions_sound": {
+      "sound": "minecraft:ambient.soul_sand_valley.additions",
+      "tick_chance": 0.0016
     }
   },
   "spawners": {
@@ -75,9 +86,7 @@
   "features": [
     [],
     [],
-    [
-      "frostline:slate_boulder"
-    ],
+    [],
     [],
     [],
     [],
@@ -85,7 +94,8 @@
     [],
     [],
     [
-      "frostline:sculk/crust"
+      "frostline:sculk/crust",
+      "frostline:sculk/veins"
     ],
     []
   ]

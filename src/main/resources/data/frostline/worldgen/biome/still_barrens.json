@@ -10,7 +10,7 @@
     "water_fog_color": 329011,
     "mood_sound": {
       "sound": "minecraft:ambient.cave",
-      "tick_delay": 6000,
+      "tick_delay": 4000,
       "block_search_extent": 8,
       "offset": 2.0
     },
@@ -23,10 +23,15 @@
       "replace_current_music": false
     },
     "particle": {
-      "probability": 0.018,
+      "probability": 0.01,
       "options": {
         "type": "minecraft:warped_spore"
       }
+    },
+    "ambient_sound": "minecraft:ambient.soul_sand_valley.loop",
+    "additions_sound": {
+      "sound": "minecraft:ambient.soul_sand_valley.additions",
+      "tick_chance": 0.006
     }
   },
   "spawners": {
