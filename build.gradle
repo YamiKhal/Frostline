@@ -20,8 +20,15 @@ minecraft {
 
 repositories { mavenCentral() }
 
+// Railways Untold is an optional runtime dependency: the compat classes compile against
+// its jar but Frostline never requires it (see FrostlineMixinPlugin / RailwaysCompat).
+// Override with -PrailwaysUntoldJar=<path> if the jar lives elsewhere.
+def railwaysUntoldJar = project.findProperty('railwaysUntoldJar') ?:
+        'C:/Users/Aaron Schwizerberg/AppData/Roaming/ATLauncher/instances/LastDeparture/mods/railwaysuntold-1.20.1-forge-1.2.2.jar'
+
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.2.20'
+    compileOnly files(railwaysUntoldJar)
 }
 
 jar {
@@ -32,7 +39,8 @@ jar {
             'Specification-Version'   : '1',
             'Implementation-Title'    : project.name,
             'Implementation-Version'  : project.jar.archiveVersion,
-            'Implementation-Vendor'   : 'frostline'
+            'Implementation-Vendor'   : 'frostline',
+            'MixinConfigs'            : 'frostline.mixins.json'
         ])
     }
 }
