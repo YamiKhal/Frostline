@@ -34,7 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *   sites     read from the seeded lake field behind the router's `continents`, so the
  *             lake always sits inside the biome the field painted
  *   t         site distance / (edge * basin_fraction), measured after a domain warp from
- *             the field noise, so the basin is lobed rather than round; t < 1 is basin
+ *             the field noise, so the basin is lobed rather than round; t < 1 is basin.
+ *             Never below the unwarped distance / BIOME_LIMIT, so it stays in the biome.
  *   rim       48 rays march out to t = 1; ChunkGenerator#getBaseHeight there gives the
  *             rim heights. Noise-only heights are identical from any chunk.
  *   waterTop  lowest rim height minus one: water sits a block under the lowest bank
@@ -53,6 +54,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
 
     private static final int RIM_RAYS = 48;
+    /** Share of the biome radius the basin may never cross, whatever the warp does. */
+    private static final double BIOME_LIMIT = 0.92D;
     private static final int PLAN_CACHE_LIMIT = 4096;
     private static final Direction[] HORIZONTAL = {
             Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
@@ -198,7 +201,10 @@ public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
         double scale = config.warpScale();
         double wx = x + field.noise().getValue(x * scale, 11.0D, z * scale) * amount;
         double wz = z + field.noise().getValue(x * scale, -23.0D, z * scale) * amount;
-        return site.normalized(wx, wz) / config.basinFraction();
+        // The warp scales with the radius, so on a big lake it could push the basin past the
+        // biome edge. Chunks out there never run this feature and the hollow would end in a
+        // step; the unwarped term pins the basin inside BIOME_LIMIT of the biome radius.
+        return Math.max(site.normalized(wx, wz) / config.basinFraction(), site.normalized(x, z) / BIOME_LIMIT);
     }
 
     private static Plan measure(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState,

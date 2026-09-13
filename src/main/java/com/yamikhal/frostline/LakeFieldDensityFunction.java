@@ -59,9 +59,9 @@ public final class LakeFieldDensityFunction implements DensityFunction.SimpleFun
                             .forGetter(LakeFieldDensityFunction::cellSize),
                     Codec.doubleRange(0.0D, 1.0D).fieldOf("chance")
                             .forGetter(LakeFieldDensityFunction::chance),
-                    Codec.doubleRange(4.0D, 128.0D).fieldOf("min_radius")
+                    Codec.doubleRange(4.0D, 256.0D).fieldOf("min_radius")
                             .forGetter(LakeFieldDensityFunction::minRadius),
-                    Codec.doubleRange(4.0D, 128.0D).fieldOf("max_radius")
+                    Codec.doubleRange(4.0D, 256.0D).fieldOf("max_radius")
                             .forGetter(LakeFieldDensityFunction::maxRadius)
             ).apply(instance, LakeFieldDensityFunction::new)));
 
