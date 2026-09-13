@@ -1,4 +1,4 @@
-package com.frostline.worldgen;
+package com.yamikhal.frostline;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
