@@ -1,0 +1,12 @@
+{
+  "weather.wind": {
+    "category": "weather",
+    "subtitle": "subtitles.frostline.weather.wind",
+    "sounds": [
+      {
+        "name": "frostline:weather/wind",
+        "stream": true
+      }
+    ]
+  }
+}

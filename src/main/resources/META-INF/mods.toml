@@ -10,6 +10,7 @@ description='''
 Registers frostline:progression, a coordinate-aware density function,
 frostline:corridor and frostline:relief_cap for the railway pass,
 and frostline:pond, a level-water pond feature.
+Scheduled snowstorms with snowfall, fog, wind and snow particles.
 Required by the Frostline worldgen datapack. Directs Railways Untold when present.
 '''
 

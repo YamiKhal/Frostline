@@ -48,6 +48,10 @@ import net.minecraftforge.registries.RegistryObject;
  * direct its line (north-south only, along the corridor, destroyed termini). Without
  * it none of that code loads.
  *
+ * weather: scheduled snowstorms on top of vanilla rain, and client-side snowfall, fog,
+ * wind and snow particles in place of the biomes' old ambient particles. Datapacks
+ * cannot schedule weather or draw it.
+ *
  * All worldgen data lives in the separate datapack. If you find yourself
  * wanting to add Java here, check first whether a density function, a surface
  * rule, or a placed feature with a block_predicate_filter can say it.
@@ -85,6 +89,7 @@ public class Frostline {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         DENSITY_FUNCTIONS.register(bus);
         FEATURES.register(bus);
+        com.yamikhal.frostline.weather.FrostlineWeather.init(bus);
         if (ModList.get().isLoaded("railwaysuntold")) {
             com.yamikhal.frostline.compat.railways.RailwaysCompat.init();
         }
