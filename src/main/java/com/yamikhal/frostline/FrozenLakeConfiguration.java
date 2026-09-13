@@ -18,8 +18,10 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
  *   min/max_depth    how far the basin centre sinks, rolled once per lake; on flat ground
  *                    the deepest water is about one less (the water sits a block below
  *                    the rim)
- *   max_bank_height  rim height spread tolerated; above it the lake stays dry and the
- *                    biome is just frozen flats
+ *   max_berm_height  most a low rim point is lifted to hold the water; also caps how far
+ *                    above the lowest rim point the water level may sit
+ *   shore_height     blocks above the water level over which the sink fades out; ground
+ *                    higher than this is never reshaped
  *   warp             domain warp strength as a share of the biome radius
  *   warp_scale       warp noise frequency; lower = broader lobes
  *   surface          the open-lake cap (thin ice)
@@ -35,7 +37,8 @@ public record FrozenLakeConfiguration(
         double basinFraction,
         int minDepth,
         int maxDepth,
-        int maxBankHeight,
+        int maxBermHeight,
+        int shoreHeight,
         double warp,
         double warpScale,
         BlockState surface,
@@ -55,8 +58,10 @@ public record FrozenLakeConfiguration(
                     .forGetter(FrozenLakeConfiguration::minDepth),
             Codec.intRange(2, 16).fieldOf("max_depth")
                     .forGetter(FrozenLakeConfiguration::maxDepth),
-            Codec.intRange(0, 32).optionalFieldOf("max_bank_height", 6)
-                    .forGetter(FrozenLakeConfiguration::maxBankHeight),
+            Codec.intRange(1, 16).optionalFieldOf("max_berm_height", 4)
+                    .forGetter(FrozenLakeConfiguration::maxBermHeight),
+            Codec.intRange(1, 16).optionalFieldOf("shore_height", 4)
+                    .forGetter(FrozenLakeConfiguration::shoreHeight),
             Codec.doubleRange(0.0D, 0.5D).optionalFieldOf("warp", 0.25D)
                     .forGetter(FrozenLakeConfiguration::warp),
             Codec.doubleRange(0.01D, 4.0D).optionalFieldOf("warp_scale", 0.33D)

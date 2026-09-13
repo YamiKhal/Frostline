@@ -1,5 +1,6 @@
 package com.yamikhal.frostline;
 
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,7 +19,9 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.material.Fluids;
+import org.slf4j.Logger;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,41 +31,61 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * Why this is not PondFeature: a lake is bigger than the 3x3 chunk write window, so each
  * chunk it touches must agree on the water level and basin shape without seeing the others'
- * blocks. Everything shared is derived from the site and from noise-only terrain heights.
+ * blocks. Everything shared is derived from the site and from noise-only terrain heights
+ * (ChunkGenerator#getBaseHeight), which are identical from any chunk.
  *
  * Model:
  *   sites     read from the seeded lake field behind the router's `continents`, so the
  *             lake always sits inside the biome the field painted
- *   t         site distance / (edge * basin_fraction), measured after a domain warp from
- *             the field noise, so the basin is lobed rather than round; t < 1 is basin.
+ *   t         site distance / (edge * basin_fraction * scale), measured after a domain warp
+ *             from the field noise, so the basin is lobed rather than round; t < 1 is basin.
  *             Never below the unwarped distance / BIOME_LIMIT, so it stays in the biome.
- *   rim       48 rays march out to t = 1; ChunkGenerator#getBaseHeight there gives the
- *             rim heights. Noise-only heights are identical from any chunk.
- *   waterTop  lowest rim height minus one: water sits a block under the lowest bank
- *   dry lake  rim spread above max_bank_height, or the sunken centre not at least 2 under
- *             waterTop: nothing is touched and the biome is frozen flats
- *   hollow    every basin column sinks by depth * Hollow.profile(t), surface carried along
- *   water     only columns whose sunken ground is below waterTop, so the shore is a
- *             contour of the real terrain and higher ground stays dry bank
+ *   waterTop  one level per lake: the LEVEL_PERCENTILE height of interior samples, capped
+ *             at max_berm_height - 1 above the lowest rim sample so a berm can still seal it.
+ *             Taken from the interior, not the rim: over a few hundred blocks the lowest rim
+ *             point is some valley floor, and a level set there floods nothing.
+ *   scale     BASIN_SCALES are tried largest first; the first where at least MIN_FLOOD_SHARE
+ *             of interior samples end up underwater wins. Flat sites get the full lake,
+ *             rolling ones a smaller one, hopeless ones none (logged once with the reason).
+ *   hollow    basin columns sink by depth * Hollow.profile(t) * heightFade, surface carried
+ *             along. heightFade is 1 at the waterline and 0 from shore_height above it, so
+ *             hills in the basin keep their shape and become islands or banks.
+ *   berm      between BERM_START and BERM_FULL, ground below waterTop + 1 is lifted towards
+ *             it (smoothstep, capped at max_berm_height), so low rim points hold the water
+ *             with a natural shoulder instead of a plugged wall
+ *   water     only columns whose reshaped ground is below waterTop; the shore is a contour
  *   cap       floe past `shoreline`, where field noise crosses floe_threshold, or where
  *             water is 1 deep (thin ice needs water under it); otherwise `surface`
- *   seal      a non-sturdy neighbour outside the basin gets a terrain-matching plug
+ *   seal      a non-sturdy neighbour outside the basin gets a terrain-matching plug; with the
+ *             berm this only fires where a rim gap was deeper than max_berm_height
  *
  * Each call rewrites only its own chunk's columns, plus sealing one block outside them.
  * Place it after minecraft:freeze_top_layer so vanilla freezing leaves the thin ice alone.
  */
 public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
 
-    private static final int RIM_RAYS = 48;
+    private static final Logger LOGGER = LogUtils.getLogger();
+
+    private static final int MIN_RIM_RAYS = 48;
+    /** Blocks of rim circumference per height sample. */
+    private static final double RIM_SPACING = 3.0D;
+    private static final int INTERIOR_RAYS = 48;
+    private static final double[] INTERIOR_FRACTIONS = {0.2D, 0.4D, 0.6D, 0.8D};
+    private static final double[] BASIN_SCALES = {1.0D, 0.8D, 0.62D, 0.48D};
+    private static final double LEVEL_PERCENTILE = 0.35D;
+    /** Share of interior samples that must end up underwater for a scale to be accepted. */
+    private static final double MIN_FLOOD_SHARE = 0.25D;
     /** Share of the biome radius the basin may never cross, whatever the warp does. */
     private static final double BIOME_LIMIT = 0.92D;
+    private static final double BERM_START = 0.8D;
+    private static final double BERM_FULL = 0.96D;
     private static final int PLAN_CACHE_LIMIT = 4096;
     private static final Direction[] HORIZONTAL = {
             Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
 
     /** Per-lake decisions every chunk must share. waterTop == DRY means leave the site alone. */
-    private record Plan(int waterTop, int depth) {
+    private record Plan(int waterTop, int depth, double scale) {
         static final int DRY = Integer.MIN_VALUE;
     }
 
@@ -127,7 +150,7 @@ public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
 
         for (int x = chunk.getMinBlockX(); x <= chunk.getMaxBlockX(); x++) {
             for (int z = chunk.getMinBlockZ(); z <= chunk.getMaxBlockZ(); z++) {
-                double t = basinT(field, config, site, x + 0.5D, z + 0.5D);
+                double t = basinT(field, config, site, plan.scale(), x + 0.5D, z + 0.5D);
                 if (t >= 1.0D) {
                     continue;
                 }
@@ -135,18 +158,31 @@ public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
                 if (g == PondFeature.NO_GROUND) {
                     continue;
                 }
-                int lower = (int) Math.round(plan.depth() * Hollow.profile(t));
-                if (!Hollow.sink(level, (pos, state) -> level.setBlock(pos, state, Block.UPDATE_CLIENTS),
-                        x, z, g, lower)) {
+
+                int lower = (int) Math.round(plan.depth() * Hollow.profile(t)
+                        * heightFade(g - waterTop, config.shoreHeight()));
+                int lift = 0;
+                if (t > BERM_START && g < waterTop + 1) {
+                    double s = Mth.clamp((t - BERM_START) / (BERM_FULL - BERM_START), 0.0D, 1.0D);
+                    lift = Math.min(config.maxBermHeight(),
+                            Mth.ceil((waterTop + 1 - g) * s * s * (3.0D - 2.0D * s)));
+                }
+                int shift = lift - lower;
+                boolean shaped = shift >= 0
+                        ? Hollow.raise(level, (pos, state) -> level.setBlock(pos, state, Block.UPDATE_CLIENTS),
+                                x, z, g, shift)
+                        : Hollow.sink(level, (pos, state) -> level.setBlock(pos, state, Block.UPDATE_CLIENTS),
+                                x, z, g, -shift);
+                if (!shaped) {
                     continue;
                 }
                 placed = true;
-                int sunk = g - lower;
-                if (sunk >= waterTop) {
+                int surface = g + shift;
+                if (surface >= waterTop) {
                     continue;
                 }
 
-                BlockPos floorPos = new BlockPos(x, sunk, z);
+                BlockPos floorPos = new BlockPos(x, surface, z);
                 BlockState floor = config.floor().getState(random, floorPos);
                 BlockPos below = floorPos.below();
                 if (floor.getBlock() instanceof FallingBlock
@@ -155,18 +191,18 @@ public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
                 }
                 level.setBlock(floorPos, floor, Block.UPDATE_CLIENTS);
 
-                for (int y = sunk + 1; y <= waterTop; y++) {
+                for (int y = surface + 1; y <= waterTop; y++) {
                     cursor.set(x, y, z);
                     BlockState state = water;
                     if (y == waterTop) {
                         boolean floe = t > config.shoreline()
-                                || waterTop - sunk < 2
+                                || waterTop - surface < 2
                                 || field.noise().getValue(x * config.floeScale(), 0.0D, z * config.floeScale())
                                         > config.floeThreshold();
                         state = floe ? config.floe().getState(random, cursor) : config.surface();
                     }
                     level.setBlock(cursor, state, Block.UPDATE_CLIENTS);
-                    seal(level, random, field, config, site, cursor.immutable());
+                    seal(level, random, field, config, site, plan.scale(), cursor.immutable());
                 }
             }
         }
@@ -174,14 +210,15 @@ public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
     }
 
     /**
-     * Neighbours inside the basin are left to their own chunk: they sink to either water or
-     * dry ground at or above waterTop, and both hold. Only the outside can leak.
+     * Neighbours inside the basin are left to their own chunk: they end up either water or
+     * ground at or above waterTop, and both hold. Only the outside can leak.
      */
     private static void seal(WorldGenLevel level, RandomSource random, LakeFieldDensityFunction field,
-                             FrozenLakeConfiguration config, LakeFieldDensityFunction.Site site, BlockPos pos) {
+                             FrozenLakeConfiguration config, LakeFieldDensityFunction.Site site, double scale,
+                             BlockPos pos) {
         for (Direction direction : HORIZONTAL) {
             BlockPos neighbor = pos.relative(direction);
-            if (basinT(field, config, site, neighbor.getX() + 0.5D, neighbor.getZ() + 0.5D) < 1.0D) {
+            if (basinT(field, config, site, scale, neighbor.getX() + 0.5D, neighbor.getZ() + 0.5D) < 1.0D) {
                 continue;
             }
             BlockState state = level.getBlockState(neighbor);
@@ -196,15 +233,27 @@ public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
     }
 
     private static double basinT(LakeFieldDensityFunction field, FrozenLakeConfiguration config,
-                                 LakeFieldDensityFunction.Site site, double x, double z) {
-        double amount = site.radius() * config.warp();
-        double scale = config.warpScale();
-        double wx = x + field.noise().getValue(x * scale, 11.0D, z * scale) * amount;
-        double wz = z + field.noise().getValue(x * scale, -23.0D, z * scale) * amount;
+                                 LakeFieldDensityFunction.Site site, double scale, double x, double z) {
+        double amount = site.radius() * config.warp() * scale;
+        double noiseScale = config.warpScale();
+        double wx = x + field.noise().getValue(x * noiseScale, 11.0D, z * noiseScale) * amount;
+        double wz = z + field.noise().getValue(x * noiseScale, -23.0D, z * noiseScale) * amount;
         // The warp scales with the radius, so on a big lake it could push the basin past the
         // biome edge. Chunks out there never run this feature and the hollow would end in a
         // step; the unwarped term pins the basin inside BIOME_LIMIT of the biome radius.
-        return Math.max(site.normalized(wx, wz) / config.basinFraction(), site.normalized(x, z) / BIOME_LIMIT);
+        return Math.max(site.normalized(wx, wz) / (config.basinFraction() * scale),
+                site.normalized(x, z) / BIOME_LIMIT);
+    }
+
+    /**
+     * 1 up to one block above the water, fading to 0 at shore_height above it. Only ground near
+     * the water level is reshaped; hills inside the basin keep their shape.
+     */
+    private static double heightFade(int above, int shoreHeight) {
+        if (above <= 1) {
+            return 1.0D;
+        }
+        return Mth.clamp(1.0D - (double) (above - 1) / shoreHeight, 0.0D, 1.0D);
     }
 
     private static Plan measure(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState,
@@ -213,28 +262,68 @@ public class FrozenLakeFeature extends Feature<FrozenLakeConfiguration> {
         int depth = Math.min(config.maxDepth(),
                 config.minDepth() + Mth.floor(site.roll() * (config.maxDepth() - config.minDepth() + 1)));
         double limit = site.radius() * 2.0D;
-        int low = Integer.MAX_VALUE;
-        int high = Integer.MIN_VALUE;
-        for (int k = 0; k < RIM_RAYS; k++) {
-            double theta = Math.PI * 2.0D * k / RIM_RAYS;
-            double cos = Math.cos(theta);
-            double sin = Math.sin(theta);
-            double r = 0.0D;
-            while (r < limit && basinT(field, config, site, site.x() + cos * r, site.z() + sin * r) < 1.0D) {
-                r += 1.0D;
+        String reason = "no scale tried";
+
+        for (double scale : BASIN_SCALES) {
+            // Dense rim sampling: a missed valley is a leak.
+            int rays = Math.max(MIN_RIM_RAYS,
+                    Mth.ceil(Math.PI * 2.0D * site.radius() * config.basinFraction() * scale / RIM_SPACING));
+            double[] rim = new double[rays];
+            int rimLow = Integer.MAX_VALUE;
+            for (int k = 0; k < rays; k++) {
+                double theta = Math.PI * 2.0D * k / rays;
+                double cos = Math.cos(theta);
+                double sin = Math.sin(theta);
+                double r = 0.0D;
+                while (r < limit && basinT(field, config, site, scale, site.x() + cos * r, site.z() + sin * r) < 1.0D) {
+                    r += 1.0D;
+                }
+                rim[k] = r;
+                rimLow = Math.min(rimLow, baseGround(generator, heights, randomState,
+                        site.x() + cos * r, site.z() + sin * r));
             }
-            int g = baseGround(generator, heights, randomState, site.x() + cos * r, site.z() + sin * r);
-            low = Math.min(low, g);
-            high = Math.max(high, g);
+
+            int step = Math.max(1, rays / INTERIOR_RAYS);
+            int count = ((rays + step - 1) / step) * INTERIOR_FRACTIONS.length;
+            int[] ground = new int[count];
+            double[] ts = new double[count];
+            int n = 0;
+            for (int k = 0; k < rays && n < count; k += step) {
+                double theta = Math.PI * 2.0D * k / rays;
+                for (double fraction : INTERIOR_FRACTIONS) {
+                    double x = site.x() + Math.cos(theta) * rim[k] * fraction;
+                    double z = site.z() + Math.sin(theta) * rim[k] * fraction;
+                    ground[n] = baseGround(generator, heights, randomState, x, z);
+                    ts[n] = basinT(field, config, site, scale, x, z);
+                    n++;
+                }
+            }
+            int[] sorted = Arrays.copyOf(ground, n);
+            Arrays.sort(sorted);
+            int interiorLevel = sorted[Math.min(n - 1, (int) (n * LEVEL_PERCENTILE))];
+            int waterTop = Math.min(interiorLevel, rimLow + config.maxBermHeight() - 1);
+            if (waterTop - depth - 8 <= heights.getMinBuildHeight()) {
+                reason = "too close to the world bottom";
+                continue;
+            }
+
+            int flooded = 0;
+            for (int i = 0; i < n; i++) {
+                double lower = depth * Hollow.profile(ts[i]) * heightFade(ground[i] - waterTop, config.shoreHeight());
+                if (ground[i] - Math.round(lower) < waterTop) {
+                    flooded++;
+                }
+            }
+            if (flooded >= n * MIN_FLOOD_SHARE) {
+                LOGGER.info("Frostline lake at {} {}: water at y={}, basin scale {}, depth {}, {}/{} samples flooded",
+                        Mth.floor(site.x()), Mth.floor(site.z()), waterTop, scale, depth, flooded, n);
+                return new Plan(waterTop, depth, scale);
+            }
+            reason = String.format("at scale %.2f level y=%d (interior y=%d, rim low y=%d) floods %d/%d samples",
+                    scale, waterTop, interiorLevel, rimLow, flooded, n);
         }
-        int waterTop = low - 1;
-        int centre = baseGround(generator, heights, randomState, site.x(), site.z());
-        if (high - low > config.maxBankHeight()
-                || waterTop - (centre - depth) < 2
-                || waterTop - depth - 8 <= heights.getMinBuildHeight()) {
-            return new Plan(Plan.DRY, depth);
-        }
-        return new Plan(waterTop, depth);
+        LOGGER.info("Frostline lake at {} {} stays dry: {}", Mth.floor(site.x()), Mth.floor(site.z()), reason);
+        return new Plan(Plan.DRY, depth, 1.0D);
     }
 
     private static int baseGround(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState,

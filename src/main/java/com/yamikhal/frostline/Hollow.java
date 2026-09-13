@@ -63,6 +63,38 @@ final class Hollow {
         return true;
     }
 
+    /**
+     * Lifts the top of column (x, z) by `amount`: surface and snow move up, and the soil under
+     * them is repeated to fill the gap, so a berm reads as ground. Emits nothing and returns
+     * false if the column holds an unmovable block or the space above is not free.
+     */
+    static boolean raise(BlockGetter level, BiConsumer<BlockPos, BlockState> out, int x, int z, int ground, int amount) {
+        if (amount <= 0) {
+            return true;
+        }
+        int from = ground - SOIL;
+        int top = ground + 2;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        BlockState[] column = new BlockState[top - from + 1];
+        for (int y = from; y <= top; y++) {
+            BlockState state = level.getBlockState(cursor.set(x, y, z));
+            if (!PondFeature.canReplace(state)) {
+                return false;
+            }
+            column[y - from] = state;
+        }
+        for (int y = top + 1; y <= top + amount; y++) {
+            BlockState state = level.getBlockState(cursor.set(x, y, z));
+            if (!state.isAir() && !(state.canBeReplaced() && state.getFluidState().isEmpty())) {
+                return false;
+            }
+        }
+        for (int y = top + amount; y >= from + amount; y--) {
+            out.accept(new BlockPos(x, y, z), column[y - amount - from]);
+        }
+        return true;
+    }
+
     /** A plug that blends in: the block under `pos` when that is solid terrain, else `fallback`. */
     static BlockState terrainLike(BlockGetter level, BlockPos pos, BlockState below, BlockState fallback) {
         BlockPos belowPos = pos.below();
