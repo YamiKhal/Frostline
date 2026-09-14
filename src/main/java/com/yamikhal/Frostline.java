@@ -1,19 +1,16 @@
 package com.yamikhal;
 
-import com.yamikhal.frostline.CorridorDensityFunction;
 import com.yamikhal.frostline.FrozenLakeConfiguration;
 import com.yamikhal.frostline.FrozenLakeFeature;
 import com.yamikhal.frostline.LakeFieldDensityFunction;
 import com.yamikhal.frostline.PondConfiguration;
 import com.yamikhal.frostline.PondFeature;
 import com.yamikhal.frostline.ProgressionDensityFunction;
-import com.yamikhal.frostline.ReliefCapDensityFunction;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -39,18 +36,13 @@ import net.minecraftforge.registries.RegistryObject;
  *                          each site, and the feature that carves that lake across
  *                          chunks at one agreed water level.
  *
- *   frostline:corridor     the railway's centre line, a density function that reads X/Z
- *   frostline:relief_cap   (seeded, bent by noise), and the wrapper that pulls mountains
- *                          down toward a target height along it: one pass through the
- *                          high regions instead of a line of tunnels.
- *
- * With Railways Untold installed, compat.railways and the mixins under mixin.railways
- * direct its line (north-south only, along the corridor, destroyed termini). Without
- * it none of that code loads.
- *
  * weather: scheduled snowstorms on top of vanilla rain, and client-side snowfall, fog,
  * wind and snow particles in place of the biomes' old ambient particles. Datapacks
  * cannot schedule weather or draw it.
+ *
+ * Railways are not here. Everything rail related (the corridor pass, Railways Untold
+ * compat, the worldgen railway) lives in the separate FrostLineRailways mod
+ * (modid frostline_railways), which depends on this one.
  *
  * All worldgen data lives in the separate datapack. If you find yourself
  * wanting to add Java here, check first whether a density function, a surface
@@ -70,12 +62,6 @@ public class Frostline {
     public static final RegistryObject<Codec<? extends DensityFunction>> LAKE_FIELD =
             DENSITY_FUNCTIONS.register("lake_field", () -> LakeFieldDensityFunction.CODEC.codec());
 
-    public static final RegistryObject<Codec<? extends DensityFunction>> CORRIDOR =
-            DENSITY_FUNCTIONS.register("corridor", () -> CorridorDensityFunction.CODEC.codec());
-
-    public static final RegistryObject<Codec<? extends DensityFunction>> RELIEF_CAP =
-            DENSITY_FUNCTIONS.register("relief_cap", () -> ReliefCapDensityFunction.CODEC.codec());
-
     public static final DeferredRegister<Feature<?>> FEATURES =
             DeferredRegister.create(Registries.FEATURE, MODID);
 
@@ -90,8 +76,5 @@ public class Frostline {
         DENSITY_FUNCTIONS.register(bus);
         FEATURES.register(bus);
         com.yamikhal.frostline.weather.FrostlineWeather.init(bus);
-        if (ModList.get().isLoaded("railwaysuntold")) {
-            com.yamikhal.frostline.compat.railways.RailwaysCompat.init();
-        }
     }
 }

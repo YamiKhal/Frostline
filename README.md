@@ -1,13 +1,17 @@
 # Frostline — Forge 1.20.1
 
-Java shim for the Frostline worldgen datapack. This mod registers exactly one
-thing: the `frostline:progression` density function type.
+Java shim for the Frostline worldgen datapack: everything the datapack needs that vanilla
+cannot express, except railways.
 
-Vanilla density functions can read Y, noise and splines but never X/Z position,
-so "region N begins M blocks from spawn" cannot be expressed in a pure datapack.
-This mod fills that single gap. All worldgen data — terrain, surfaces, biomes,
-features, dimensions — lives in the separate Frostline datapack, which requires
-this mod to load.
+| id / system | what |
+|---|---|
+| `frostline:progression` | density function that reads X/Z: "region N begins M blocks north" |
+| `frostline:lake_field`, `frostline:frozen_lake` | lake sites by X/Z and the feature that carves them |
+| `frostline:pond` | level-water pond feature |
+| weather | scheduled snowstorms, snowfall, fog, wind, snow particles (`frostline-weather*.toml`) |
+
+**Railways are a separate mod:** `FrostLineRailways` (modid `frostline_railways`), which
+depends on this one. See `CUSTOMMOD.md` and `RAILWAYS.md` in the datapack.
 
 ## `frostline:progression`
 
@@ -16,7 +20,8 @@ z       = blockZ * z_direction
 along   = |z| / (z >= 0 ? north_range : south_range)
 lateral = min(|x| / x_range, x_cap)
 t       = min(1, along + lateral)
-v       = lerp(start_value, end_value, t)
+blocks  = t * range + jitter_blocks * jitter_noise(x, z)
+v       = lerp(start_value, end_value, blocks / range)   or   piecewise(knots, blocks)
 if z < 0: v = min(v, south_cap)
 ```
 
@@ -30,20 +35,8 @@ if z < 0: v = min(v, south_cap)
 | `start_value` | -1.0 | value at origin |
 | `end_value` | 1.0 | value at full progression |
 | `z_direction` | 1.0 | -1 flips the payoff to compass north (-Z) |
-
-Output is smooth and monotonic in |z|. Add border wobble datapack-side by
-summing a low-frequency noise onto it.
-
-Example:
-
-```json
-{
-  "type": "frostline:progression",
-  "north_range": 50000.0,
-  "south_cap": -0.7,
-  "z_direction": -1.0
-}
-```
+| `knots` | none | `[[blocks, value(, jitter)], ...]` piecewise-linear map, overrides start/end |
+| `jitter_noise`, `jitter_xz_scale`, `jitter_blocks` | none, 0.35, 0 | border wobble in blocks |
 
 ## Building
 
@@ -51,5 +44,4 @@ Example:
 ./gradlew build
 ```
 
-`build/libs/frostline-1.0.0.jar` → `mods/`. JDK 17. Install the datapack
-separately.
+`build/libs/frostline-1.0.0.jar` → `mods/`. JDK 17. Install the datapack separately.

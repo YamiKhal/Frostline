@@ -8,10 +8,9 @@ version="1.0.0"
 displayName="Frostline"
 description='''
 Registers frostline:progression, a coordinate-aware density function,
-frostline:corridor and frostline:relief_cap for the railway pass,
-and frostline:pond, a level-water pond feature.
+frostline:lake_field and frostline:frozen_lake, and frostline:pond, a level-water pond feature.
 Scheduled snowstorms with snowfall, fog, wind and snow particles.
-Required by the Frostline worldgen datapack. Directs Railways Untold when present.
+Required by the Frostline worldgen datapack. Railways live in FrostLineRailways.
 '''
 
 [[dependencies.frostline]]
@@ -25,12 +24,5 @@ Required by the Frostline worldgen datapack. Directs Railways Untold when presen
     modId="minecraft"
     mandatory=true
     versionRange="[1.20.1,1.21)"
-    ordering="NONE"
-    side="BOTH"
-
-[[dependencies.frostline]]
-    modId="railwaysuntold"
-    mandatory=false
-    versionRange="[1.2.2,)"
     ordering="NONE"
     side="BOTH"
