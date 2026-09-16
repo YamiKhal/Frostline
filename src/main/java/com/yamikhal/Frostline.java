@@ -31,6 +31,10 @@ import net.minecraftforge.registries.RegistryObject;
  *                          fails on slopes; vegetation patches step with the terrain
  *                          and leak. Every pond parameter is still datapack JSON.
  *
+ *   (rivers are NOT here. They are terrain cut below sea_level by the noise router, and
+ *    the engine floods them: the vanilla mechanism. Four Java versions of a stream feature
+ *    were deleted when the world's vertical layout was re-based onto sea level 63.)
+ *
  *   frostline:lake_field   a density function placing sparse lake sites by X/Z, fed to
  *   frostline:frozen_lake  the router's continents slot so a biome lands exactly on
  *                          each site, and the feature that carves that lake across
