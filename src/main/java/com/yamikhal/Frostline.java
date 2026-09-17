@@ -2,7 +2,7 @@ package com.yamikhal;
 
 import com.yamikhal.frostline.FrozenLakeConfiguration;
 import com.yamikhal.frostline.FrozenLakeFeature;
-import com.yamikhal.frostline.GroundFilterProcessor;
+import com.yamikhal.frostline.PlacementFilterProcessor;
 import com.yamikhal.frostline.LakeFieldDensityFunction;
 import com.yamikhal.frostline.PondConfiguration;
 import com.yamikhal.frostline.PondFeature;
@@ -37,11 +37,11 @@ import net.minecraftforge.registries.RegistryObject;
  *    the engine floods them: the vanilla mechanism. Four Java versions of a stream feature
  *    were deleted when the world's vertical layout was re-based onto sea level 63.)
  *
- *   frostline:ground_filter  a structure processor that drops a jigsaw piece whose ground is
- *                          not in the block list it is given. A feature can say this with a
- *                          block_predicate_filter; a structure cannot, and a structure start
- *                          is placed on the noise heightmap, before the lakes step puts ice
- *                          under it, so fallen trees landed on frozen lakes.
+ *   frostline:placement_filter  a structure processor that drops a whole jigsaw piece unless
+ *                          its ground blocks, height band, slope, headroom and thinning roll
+ *                          all pass. Features get those from placement modifiers; a structure
+ *                          has only biomes and spacing, and its start is placed on the noise
+ *                          heightmap, before the lakes step puts ice under it.
  *
  *   frostline:lake_field   a density function placing sparse lake sites by X/Z, fed to
  *   frostline:frozen_lake  the router's continents slot so a biome lands exactly on
@@ -86,8 +86,8 @@ public class Frostline {
     public static final DeferredRegister<StructureProcessorType<?>> STRUCTURE_PROCESSORS =
             DeferredRegister.create(Registries.STRUCTURE_PROCESSOR, MODID);
 
-    public static final RegistryObject<StructureProcessorType<GroundFilterProcessor>> GROUND_FILTER =
-            STRUCTURE_PROCESSORS.register("ground_filter", () -> () -> GroundFilterProcessor.CODEC);
+    public static final RegistryObject<StructureProcessorType<PlacementFilterProcessor>> PLACEMENT_FILTER =
+            STRUCTURE_PROCESSORS.register("placement_filter", () -> () -> PlacementFilterProcessor.CODEC);
 
     public Frostline() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
