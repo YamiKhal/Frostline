@@ -8,5 +8,13 @@
         "stream": true
       }
     ]
+  },
+  "block.ice.crack": {
+    "category": "block",
+    "subtitle": "subtitles.frostline.block.ice.crack",
+    "sounds": [
+      "frostline:block/ice_crack_0",
+      "frostline:block/ice_crack_1"
+    ]
   }
 }

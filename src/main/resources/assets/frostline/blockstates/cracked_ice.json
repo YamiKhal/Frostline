@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "cracked=0": { "model": "minecraft:block/ice" },
+    "cracked=1": { "model": "frostline:block/cracked_ice_1" },
+    "cracked=2": { "model": "frostline:block/cracked_ice_2" },
+    "cracked=3": { "model": "frostline:block/cracked_ice_3" }
+  }
+}

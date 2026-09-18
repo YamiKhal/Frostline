@@ -7,11 +7,21 @@ import com.yamikhal.frostline.LakeFieldDensityFunction;
 import com.yamikhal.frostline.PondConfiguration;
 import com.yamikhal.frostline.PondFeature;
 import com.yamikhal.frostline.ProgressionDensityFunction;
+import com.yamikhal.frostline.CrackedIceBlock;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -42,6 +52,11 @@ import net.minecraftforge.registries.RegistryObject;
  *                          all pass. Features get those from placement modifiers; a structure
  *                          has only biomes and spacing, and its start is placed on the noise
  *                          heightmap, before the lakes step puts ice under it.
+ *
+ *   frostline:cracked_ice  ice that cracks underfoot and drops you in. A datapack can place a
+ *                          block but cannot give it stepOn/fallOn behaviour, so this one is the
+ *                          only part of it that has to be Java. Replaces the dropped
+ *                          immersive_weathering:thin_ice.
  *
  *   frostline:lake_field   a density function placing sparse lake sites by X/Z, fed to
  *   frostline:frozen_lake  the router's continents slot so a biome lands exactly on
@@ -89,11 +104,46 @@ public class Frostline {
     public static final RegistryObject<StructureProcessorType<PlacementFilterProcessor>> PLACEMENT_FILTER =
             STRUCTURE_PROCESSORS.register("placement_filter", () -> () -> PlacementFilterProcessor.CODEC);
 
+    public static final DeferredRegister<Block> BLOCKS =
+            DeferredRegister.create(Registries.BLOCK, MODID);
+    public static final DeferredRegister<Item> ITEMS =
+            DeferredRegister.create(Registries.ITEM, MODID);
+    public static final DeferredRegister<SoundEvent> BLOCK_SOUNDS =
+            DeferredRegister.create(Registries.SOUND_EVENT, MODID);
+
+    /**
+     * Ice you can fall through. Copied from vanilla ice so it melts, drops and mines the same;
+     * only the step and fall behaviour is new (CrackedIceBlock).
+     */
+    public static final RegistryObject<CrackedIceBlock> CRACKED_ICE =
+            BLOCKS.register("cracked_ice",
+                    () -> new CrackedIceBlock(BlockBehaviour.Properties.copy(Blocks.ICE)));
+
+    public static final RegistryObject<BlockItem> CRACKED_ICE_ITEM =
+            ITEMS.register("cracked_ice",
+                    () -> new BlockItem(CRACKED_ICE.get(), new Item.Properties()));
+
+    public static final RegistryObject<SoundEvent> ICE_CRACK = BLOCK_SOUNDS.register("block.ice.crack",
+            () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(MODID, "block.ice.crack")));
+
     public Frostline() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         DENSITY_FUNCTIONS.register(bus);
         FEATURES.register(bus);
         STRUCTURE_PROCESSORS.register(bus);
+        BLOCKS.register(bus);
+        ITEMS.register(bus);
+        BLOCK_SOUNDS.register(bus);
+        bus.addListener(Frostline::onBuildCreativeTabs);
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
+            com.yamikhal.frostline.client.BlockRenderTypes.init(bus);
+        }
         com.yamikhal.frostline.weather.FrostlineWeather.init(bus);
+    }
+
+    private static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
+            event.accept(CRACKED_ICE_ITEM);
+        }
     }
 }
