@@ -4,25 +4,37 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.yamikhal.Frostline;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * All-or-nothing placement gate for a jigsaw piece: the conditions a placed feature gets from
@@ -67,6 +79,17 @@ import java.util.Optional;
  *   chance        thinning roll, 0-1, from the piece's own position and `salt`. The
  *                 rarity_filter a structure set cannot express without widening its spread.
  *   salt          keeps two lists using `chance` from rolling the same pieces.
+ *   yield_to      structures (a tag or a list) this piece gives way to: if any of their pieces'
+ *                 bounding boxes overlaps this piece's box, widened by yield_margin, this piece
+ *                 is dropped. Listing the piece's own structure spaces copies of it apart; the
+ *                 copy whose start chunk sorts first keeps its place. Never let two different
+ *                 structures yield to each other - both would drop.
+ *   yield_margin  blocks of horizontal gap required around the piece for yield_to (default 0).
+ *
+ * yield_to reads structure starts, not blocks, so the answer is fixed before anything places:
+ * the same in every chunk a piece crosses and whichever structure places first. The cost is
+ * that it yields to the other piece's whole box, air included, and to a piece that its own
+ * filter later drops.
  *
  * Cost: one pass over the piece's blocks, then at most (max_drop + clearance + 1) block reads
  * per column, once, when the piece places. A 7x3 fallen tree is about fifty reads. Keep
@@ -100,7 +123,11 @@ public class PlacementFilterProcessor extends StructureProcessor {
             Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F)
                     .forGetter((PlacementFilterProcessor p) -> p.chance),
             Codec.INT.optionalFieldOf("salt", 0)
-                    .forGetter((PlacementFilterProcessor p) -> p.salt)
+                    .forGetter((PlacementFilterProcessor p) -> p.salt),
+            RegistryCodecs.homogeneousList(Registries.STRUCTURE).optionalFieldOf("yield_to")
+                    .forGetter((PlacementFilterProcessor p) -> p.yieldTo),
+            Codec.intRange(0, 16).optionalFieldOf("yield_margin", 0)
+                    .forGetter((PlacementFilterProcessor p) -> p.yieldMargin)
     ).apply(instance, PlacementFilterProcessor::new));
 
     private static final List<StructureTemplate.StructureBlockInfo> VETO = List.of();
@@ -116,6 +143,8 @@ public class PlacementFilterProcessor extends StructureProcessor {
     private final boolean clearFootprint;
     private final float chance;
     private final int salt;
+    private final Optional<HolderSet<Structure>> yieldTo;
+    private final int yieldMargin;
 
     public PlacementFilterProcessor(
             Optional<HolderSet<Block>> ground,
@@ -128,7 +157,9 @@ public class PlacementFilterProcessor extends StructureProcessor {
             int clearance,
             boolean clearFootprint,
             float chance,
-            int salt) {
+            int salt,
+            Optional<HolderSet<Structure>> yieldTo,
+            int yieldMargin) {
         this.ground = ground;
         this.forbidden = forbidden;
         this.maxDrop = maxDrop;
@@ -140,6 +171,8 @@ public class PlacementFilterProcessor extends StructureProcessor {
         this.clearFootprint = clearFootprint;
         this.chance = chance;
         this.salt = salt;
+        this.yieldTo = yieldTo;
+        this.yieldMargin = yieldMargin;
     }
 
     @Override
@@ -176,6 +209,11 @@ public class PlacementFilterProcessor extends StructureProcessor {
         }
 
         if (this.chance < 1.0F && roll(anchor) >= this.chance) {
+            return VETO;
+        }
+
+        if (this.yieldTo.isPresent() && level instanceof WorldGenRegion region
+                && yields(region, pieceOrigin, anchor)) {
             return VETO;
         }
 
@@ -231,6 +269,67 @@ public class PlacementFilterProcessor extends StructureProcessor {
     }
 
     private static final int NO_GROUND = Integer.MIN_VALUE;
+
+    /**
+     * True when a structure in yield_to has a piece overlapping this one. The piece is found
+     * among the starts referenced by the chunk being written, by its placement origin; every
+     * chunk under its widened box is then searched, since a piece can only overlap it where
+     * some such chunk references it.
+     */
+    private boolean yields(WorldGenRegion region, BlockPos pieceOrigin, BlockPos written) {
+        StructureManager structures = region.getLevel().structureManager().forWorldGenRegion(region);
+
+        StructureStart ownStart = null;
+        BoundingBox ownBox = null;
+        for (StructureStart start : structures.startsForStructure(new ChunkPos(written), s -> true)) {
+            for (StructurePiece piece : start.getPieces()) {
+                if (piece instanceof PoolElementStructurePiece pool && pool.getPosition().equals(pieceOrigin)) {
+                    ownStart = start;
+                    ownBox = piece.getBoundingBox();
+                }
+            }
+        }
+        if (ownStart == null) {
+            return false;
+        }
+
+        int m = this.yieldMargin;
+        BoundingBox box = new BoundingBox(ownBox.minX() - m, ownBox.minY(), ownBox.minZ() - m,
+                ownBox.maxX() + m, ownBox.maxY(), ownBox.maxZ() + m);
+        var registry = region.registryAccess().registryOrThrow(Registries.STRUCTURE);
+        HolderSet<Structure> yieldTo = this.yieldTo.get();
+        Set<StructureStart> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+        seen.add(ownStart);
+
+        for (int cx = box.minX() >> 4; cx <= box.maxX() >> 4; cx++) {
+            for (int cz = box.minZ() >> 4; cz <= box.maxZ() >> 4; cz++) {
+                for (StructureStart start : structures.startsForStructure(new ChunkPos(cx, cz), s -> true)) {
+                    if (!seen.add(start)) {
+                        continue;
+                    }
+                    Structure other = start.getStructure();
+                    Holder<Structure> holder = registry.wrapAsHolder(other);
+                    if (!yieldTo.contains(holder)) {
+                        continue;
+                    }
+                    if (other == ownStart.getStructure() && !before(start.getChunkPos(), ownStart.getChunkPos())) {
+                        continue;
+                    }
+                    for (StructurePiece piece : start.getPieces()) {
+                        if (piece.getBoundingBox().intersects(box)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Stable order between two starts of one structure: the earlier one keeps its place. */
+    private static boolean before(ChunkPos a, ChunkPos b) {
+        return a.x != b.x ? a.x < b.x : a.z < b.z;
+    }
 
     /** Y of the ground carrying this column, or NO_GROUND when there is none it may stand on. */
     private int probe(ServerLevelAccessor level, BlockPos footprint) {

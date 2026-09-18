@@ -7,6 +7,7 @@ import com.yamikhal.frostline.LakeFieldDensityFunction;
 import com.yamikhal.frostline.PondConfiguration;
 import com.yamikhal.frostline.PondFeature;
 import com.yamikhal.frostline.ProgressionDensityFunction;
+import com.yamikhal.frostline.PropStructure;
 import com.yamikhal.frostline.CrackedIceBlock;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -52,6 +54,10 @@ import net.minecraftforge.registries.RegistryObject;
  *                          all pass. Features get those from placement modifiers; a structure
  *                          has only biomes and spacing, and its start is placed on the noise
  *                          heightmap, before the lakes step puts ice under it.
+ *
+ *   frostline:prop         a single-piece jigsaw structure whose start is a random block in its
+ *                          chunk. minecraft:jigsaw always starts at the chunk's corner, so
+ *                          every prop in the world shared one lattice and stacked on each other.
  *
  *   frostline:cracked_ice  ice that cracks underfoot and drops you in. A datapack can place a
  *                          block but cannot give it stepOn/fallOn behaviour, so this one is the
@@ -104,6 +110,12 @@ public class Frostline {
     public static final RegistryObject<StructureProcessorType<PlacementFilterProcessor>> PLACEMENT_FILTER =
             STRUCTURE_PROCESSORS.register("placement_filter", () -> () -> PlacementFilterProcessor.CODEC);
 
+    public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES =
+            DeferredRegister.create(Registries.STRUCTURE_TYPE, MODID);
+
+    public static final RegistryObject<StructureType<PropStructure>> PROP =
+            STRUCTURE_TYPES.register("prop", () -> () -> PropStructure.CODEC);
+
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(Registries.BLOCK, MODID);
     public static final DeferredRegister<Item> ITEMS =
@@ -131,6 +143,7 @@ public class Frostline {
         DENSITY_FUNCTIONS.register(bus);
         FEATURES.register(bus);
         STRUCTURE_PROCESSORS.register(bus);
+        STRUCTURE_TYPES.register(bus);
         BLOCKS.register(bus);
         ITEMS.register(bus);
         BLOCK_SOUNDS.register(bus);
