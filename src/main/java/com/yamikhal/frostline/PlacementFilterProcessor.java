@@ -95,9 +95,13 @@ import java.util.Set;
  * per column, once, when the piece places. A 7x3 fallen tree is about fifty reads. Keep
  * `max_drop` and `clearance` small and this never shows up next to the block writes it guards.
  *
- * Known edge: a piece that straddles a chunk border is handed to the processor once per chunk,
- * already clipped, so each half is judged on its own columns. Pieces small enough to sit in one
- * chunk most of the time (props, logs, boulders) are unaffected in practice.
+ * Chunk borders: StructureTemplate.processBlockInfos runs the processors over the WHOLE piece
+ * (placeInWorld clips to the chunk only when writing), so a piece crossing a border is judged
+ * once per chunk it touches, on all of its columns each time. The block probes read the real
+ * world, and the neighbour chunk may have been decorated or not at that moment, so in rare cases
+ * (a feature landing under the piece in between) the two passes can disagree and leave half a
+ * piece. Everything that decides from structure data instead of blocks - yield_to, and
+ * frostline:prop's max_slope - gives the same answer on every pass.
  */
 public class PlacementFilterProcessor extends StructureProcessor {
 
@@ -213,7 +217,7 @@ public class PlacementFilterProcessor extends StructureProcessor {
         }
 
         if (this.yieldTo.isPresent() && level instanceof WorldGenRegion region
-                && yields(region, pieceOrigin, anchor)) {
+                && yields(region, pieceOrigin, settings, processed)) {
             return VETO;
         }
 
@@ -271,21 +275,34 @@ public class PlacementFilterProcessor extends StructureProcessor {
     private static final int NO_GROUND = Integer.MIN_VALUE;
 
     /**
-     * True when a structure in yield_to has a piece overlapping this one. The piece is found
-     * among the starts referenced by the chunk being written, by its placement origin; every
-     * chunk under its widened box is then searched, since a piece can only overlap it where
-     * some such chunk references it.
+     * True when a structure in yield_to has a piece overlapping this one.
+     *
+     * The piece is found among the starts referenced by the chunk holding its first block: same
+     * placement origin, same rotation, and a box that holds every block it writes. Two props of
+     * different structures can share an origin (independent offsets meet on one block about once
+     * per 256 shared chunks); rotation and the box tell them apart. A piece not found, such as a
+     * template placed by command, never yields.
+     *
+     * Every chunk under the widened box is then searched, since another piece can only overlap
+     * this one where some such chunk references it. All of those chunks are within two of the
+     * one being decorated, well inside the region's structure-reference radius.
      */
-    private boolean yields(WorldGenRegion region, BlockPos pieceOrigin, BlockPos written) {
+    private boolean yields(WorldGenRegion region, BlockPos pieceOrigin, StructurePlaceSettings settings,
+                           List<StructureTemplate.StructureBlockInfo> processed) {
         StructureManager structures = region.getLevel().structureManager().forWorldGenRegion(region);
 
         StructureStart ownStart = null;
         BoundingBox ownBox = null;
-        for (StructureStart start : structures.startsForStructure(new ChunkPos(written), s -> true)) {
+        search:
+        for (StructureStart start : structures.startsForStructure(new ChunkPos(processed.get(0).pos()), s -> true)) {
             for (StructurePiece piece : start.getPieces()) {
-                if (piece instanceof PoolElementStructurePiece pool && pool.getPosition().equals(pieceOrigin)) {
+                if (piece instanceof PoolElementStructurePiece pool
+                        && pool.getPosition().equals(pieceOrigin)
+                        && pool.getRotation() == settings.getRotation()
+                        && holdsAll(piece.getBoundingBox(), processed)) {
                     ownStart = start;
                     ownBox = piece.getBoundingBox();
+                    break search;
                 }
             }
         }
@@ -324,6 +341,15 @@ public class PlacementFilterProcessor extends StructureProcessor {
             }
         }
         return false;
+    }
+
+    private static boolean holdsAll(BoundingBox box, List<StructureTemplate.StructureBlockInfo> blocks) {
+        for (StructureTemplate.StructureBlockInfo info : blocks) {
+            if (!box.isInside(info.pos())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Stable order between two starts of one structure: the earlier one keeps its place. */
