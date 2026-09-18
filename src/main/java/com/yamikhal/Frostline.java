@@ -1,9 +1,11 @@
 package com.yamikhal;
 
+import com.yamikhal.frostline.FreezeTopLayerFeature;
 import com.yamikhal.frostline.FrozenLakeConfiguration;
 import com.yamikhal.frostline.FrozenLakeFeature;
 import com.yamikhal.frostline.PlacementFilterProcessor;
 import com.yamikhal.frostline.LakeFieldDensityFunction;
+import com.yamikhal.frostline.NotStructureSnowFilter;
 import com.yamikhal.frostline.PondConfiguration;
 import com.yamikhal.frostline.PondFeature;
 import com.yamikhal.frostline.ProgressionDensityFunction;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -58,6 +61,12 @@ import net.minecraftforge.registries.RegistryObject;
  *   frostline:prop         a single-piece jigsaw structure whose start is a random block in its
  *                          chunk. minecraft:jigsaw always starts at the chunk's corner, so
  *                          every prop in the world shared one lattice and stacked on each other.
+ *
+ *   frostline:not_structure_snow  a placement filter for snow passes: skips snow a structure
+ *   frostline:freeze_top_layer    template placed. Snow passes are the last feature step and run
+ *                          after every structure; a placement can test blocks and biome, never "a
+ *                          structure wrote this". freeze_top_layer walks every column inside one
+ *                          placement, so it gets a wrapper feature instead of a filter.
  *
  *   frostline:cracked_ice  ice that cracks underfoot and drops you in. A datapack can place a
  *                          block but cannot give it stepOn/fallOn behaviour, so this one is the
@@ -104,6 +113,9 @@ public class Frostline {
     public static final RegistryObject<FrozenLakeFeature> FROZEN_LAKE =
             FEATURES.register("frozen_lake", () -> new FrozenLakeFeature(FrozenLakeConfiguration.CODEC));
 
+    public static final RegistryObject<FreezeTopLayerFeature> FREEZE_TOP_LAYER =
+            FEATURES.register("freeze_top_layer", FreezeTopLayerFeature::new);
+
     public static final DeferredRegister<StructureProcessorType<?>> STRUCTURE_PROCESSORS =
             DeferredRegister.create(Registries.STRUCTURE_PROCESSOR, MODID);
 
@@ -115,6 +127,12 @@ public class Frostline {
 
     public static final RegistryObject<StructureType<PropStructure>> PROP =
             STRUCTURE_TYPES.register("prop", () -> () -> PropStructure.CODEC);
+
+    public static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIERS =
+            DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, MODID);
+
+    public static final RegistryObject<PlacementModifierType<NotStructureSnowFilter>> NOT_STRUCTURE_SNOW =
+            PLACEMENT_MODIFIERS.register("not_structure_snow", () -> () -> NotStructureSnowFilter.CODEC);
 
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(Registries.BLOCK, MODID);
@@ -144,6 +162,7 @@ public class Frostline {
         FEATURES.register(bus);
         STRUCTURE_PROCESSORS.register(bus);
         STRUCTURE_TYPES.register(bus);
+        PLACEMENT_MODIFIERS.register(bus);
         BLOCKS.register(bus);
         ITEMS.register(bus);
         BLOCK_SOUNDS.register(bus);
